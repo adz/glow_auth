@@ -3,7 +3,7 @@
 [![Package Version](https://img.shields.io/hexpm/v/glowauth)](https://hex.pm/packages/glowauth)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/glowauth/)
 
-A Gleam project
+OAuth2 helpers in Gleam... very not ready for usage.
 
 ## Quick start
 
@@ -15,7 +15,7 @@ gleam shell # Run an Erlang shell
 
 ## Installation
 
-If available on Hex this package can be added to your Gleam project:
+This package can be added to your Gleam project:
 
 ```sh
 gleam add glowauth
