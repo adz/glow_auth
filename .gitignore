@@ -1,3 +1,5 @@
+src/gleam
+src/gleam_*
 .rebar3
 _*
 .eunit
