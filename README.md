@@ -32,8 +32,8 @@ extensibility mechanism for defining additional types.
 Once granted an access token, it is typically included as a header
 in your requests to the HTTP service.
 
-Use [glow_auth#authorization_header](#authorization_header) to embed the header
-to your request.
+Use [glow_auth#authorization_header](./glow_auth.html#authorization_header)
+to embed the header to your request.
 
 
 ## Authorization Code
