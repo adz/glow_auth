@@ -48,7 +48,6 @@
 import gleam/uri.{Uri}
 import gleam/option.{None, Option, Some}
 import glow_auth.{Client}
-import glow_auth/uri/params
 import glow_auth/uri/uri_builder.{UriAppendage}
 
 /// Represents the details needed to build an authorization Uri.
@@ -96,14 +95,22 @@ fn to_uri(
     Code -> "code"
   }
 
+  let prepend_some = fn(list, key, maybe_value) {
+    case maybe_value {
+      Some(value) -> [#(key, value), ..list]
+      None -> list
+    }
+  }
+
   let q =
-    params.new()
-    |> params.put("response_type", response_type)
-    |> params.put("client_id", spec.client.id)
-    |> params.put("redirect_uri", uri.to_string(spec.redirect_uri))
-    |> params.put_option("state", spec.state)
-    |> params.put_option("scope", spec.scope)
-    |> params.to_query
+    [
+      #("response_type", response_type),
+      #("client_id", spec.client.id),
+      #("redirect_uri", uri.to_string(spec.redirect_uri)),
+    ]
+    |> prepend_some("state", spec.state)
+    |> prepend_some("scope", spec.scope)
+    |> uri.query_to_string()
 
   Uri(..auth_uri, query: Some(q))
 }

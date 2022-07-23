@@ -1,7 +1,6 @@
-//// Uri Builder helps to append relative paths to a Uri, but!
-////
+//// Uri Builder helps to append relative paths to a Uri, but
 //// with the capacity to fully replace the path
-//// ...or full Uri via an explicit UriAppendage type.
+//// or full Uri via an explicit UriAppendage type.
 ////
 
 import gleam/uri.{Uri}
