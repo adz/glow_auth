@@ -1,13 +1,8 @@
-//// AuthorizeUri provides a builder to generate your Authorization Uri
-//// to use in an Authorization Code or Implicit grant flow.
+//// A builder to generate an Authorization Uri.
 ////
-//// Since this is a redirection-based flow, the client must be capable of
-//// interacting with the resource owner's user-agent (typically a web
-//// browser) and capable of receiving incoming requests (via redirection)
-//// from the authorization server.
-//// 
-//// Basically, send your user to the Authorization Uri, where it's expected
-//// they will login or authenticate somehow, then they get redirected back.
+//// The client directs the resource owner to the constructed URI using an
+//// HTTP redirection response, or by other means available to it via the
+//// user-agent.
 ////
 //// In Authorization Code flow, they'll be redirected with a "code" in the uri,
 //// which is short lived (10 minutes expiry recommended) that must be exchanged
@@ -30,17 +25,38 @@
 //// The exception is if there is a problem with the Redirect Uri, like not set,
 //// or not registered in the Authorization provider, in which case the redirect
 //// back will just not occur.
+////
+//// Some requirements:
+////  * MAY have query component
+////  * MUST NOT have fragment component
+////  * MUST use TLS
+////  * MUST support GET method
+////  * MAY support POST as well
+////  * Params without value MUST be same as omission
+////  * No repeat params
+////  * MUST include response_type, typically json
+////
+//// Note that when redirected, the response:
+////  * MUST include the "code" for AuthCode, or the "token" if Implicit
+////  * MUST return error if response_type is missing or misunderstood
+////  * MAY have query component
+////  * MUST NOT have fragment component
+////  * SHOULD use TLS for "code" or "token"
+////  * Typically are registered in advance of usage
+////  * Receiving response SHOULD NOT do js, but redirect again without exposing creds
 
 import gleam/uri.{Uri}
 import gleam/option.{None, Option, Some}
-import glow_auth/client.{Client}
+import glow_auth.{Client}
 import glow_auth/uri/params
 import glow_auth/uri/uri_builder.{UriAppendage}
 
 /// Represents the details needed to build an authorization Uri.
 ///
-/// Use `build`, `set_scope`, `set_state` to build up one of these, then
-/// `to_uri` to convert to a Uri.
+/// Use [build](#build), [set_scope](#set_scope), [set_state](#set_state) to build
+/// up one of these, then [to_code_authorization_uri](#to_code_authorization_uri)
+/// or [to_implicit_authorization_uri](#to_implicit_authorization_uri)
+/// to convert to a Uri.
 pub type AuthUriSpec(body) {
   AuthUriSpec(
     client: Client(body),
@@ -51,15 +67,38 @@ pub type AuthUriSpec(body) {
   )
 }
 
-/// Convert an AuthUriSpec to an Authorization Uri.
-pub fn to_uri(spec: AuthUriSpec(body)) -> Uri {
+/// Supported response types
+type AuthorizationResponseType {
+  Token
+  Code
+}
+
+/// Convert an AuthUriSpec to an Authorization Uri for `code` flow.
+pub fn to_code_authorization_uri(spec: AuthUriSpec(body)) -> Uri {
+  to_uri(spec, Code)
+}
+
+/// Convert an AuthUriSpec to an Authorization Uri for `implicit` flow.
+pub fn to_implicit_authorization_uri(spec: AuthUriSpec(body)) -> Uri {
+  to_uri(spec, Token)
+}
+
+fn to_uri(
+  spec: AuthUriSpec(body),
+  response_type: AuthorizationResponseType,
+) -> Uri {
   let auth_uri =
     spec.authorize_uri
     |> uri_builder.append(to: spec.client.site)
 
+  let response_type = case response_type {
+    Token -> "token"
+    Code -> "code"
+  }
+
   let q =
     params.new()
-    |> params.put("response_type", "code")
+    |> params.put("response_type", response_type)
     |> params.put("client_id", spec.client.id)
     |> params.put("redirect_uri", uri.to_string(spec.redirect_uri))
     |> params.put_option("state", spec.state)
@@ -98,6 +137,8 @@ pub fn set_scope(spec: AuthUriSpec(body), scope: String) -> AuthUriSpec(body) {
 }
 
 /// Set the state in the AuthUriSpec
+///
+/// This can be useful as it will be included on the redirect back.
 pub fn set_state(spec: AuthUriSpec(body), state: String) -> AuthUriSpec(body) {
   AuthUriSpec(..spec, state: Some(state))
 }

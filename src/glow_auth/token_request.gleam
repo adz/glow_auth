@@ -1,14 +1,14 @@
-//// Token Request builders
+//// Token Request functions.
 
 import gleam/uri.{Uri}
 import gleam/http/request.{Request}
-import glow_auth/client.{Client}
+import glow_auth.{Client}
 import glow_auth/uri/uri_builder.{UriAppendage}
 import glow_auth/token_request/auth.{AuthHeader, AuthScheme}
 import glow_auth/token_request/request_builder
 
-/// Build a token request using Authorization Code grant
-/// https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.3
+/// Build a token request using a code in 
+/// [Authorization Code grant](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.3).
 ///
 /// Notes: 
 ///  * The redirect_uri must be identical to usage in the Authorization Uri.
@@ -29,8 +29,8 @@ pub fn authorization_code(
   |> request_builder.to_token_request()
 }
 
-/// Build a token request using Client Credentials grant
-/// https://datatracker.ietf.org/doc/html/rfc6749#section-4.4.2
+/// Build a token request using just the client id/secret in
+/// [Client Credentials grant](https://datatracker.ietf.org/doc/html/rfc6749#section-4.4.2)
 pub fn client_credentials(
   client: Client(body),
   token_uri: UriAppendage,
@@ -44,8 +44,8 @@ pub fn client_credentials(
   |> request_builder.to_token_request()
 }
 
-/// Build a token request using Refresh token
-/// https://datatracker.ietf.org/doc/html/rfc6749#section-6
+/// Build a token request using a 
+/// [Refresh token](https://datatracker.ietf.org/doc/html/rfc6749#section-6)
 pub fn refresh(
   client: Client(body),
   token_uri: UriAppendage,

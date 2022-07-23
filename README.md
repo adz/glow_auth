@@ -3,15 +3,7 @@
 [![Package Version](https://img.shields.io/hexpm/v/glow_auth)](https://hex.pm/packages/glow_auth)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/glow_auth/)
 
-OAuth2 helpers in Gleam... very not ready for usage.
-
-## Quick start
-
-```sh
-gleam run   # Run the project
-gleam test  # Run the tests
-gleam shell # Run an Erlang shell
-```
+Glow Auth is a gleam OAuth 2.0 Client library.
 
 ## Installation
 

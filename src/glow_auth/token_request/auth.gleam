@@ -2,7 +2,7 @@ import gleam/string
 import gleam/http/request.{Request}
 import gleam/bit_string
 import gleam/base
-import glow_auth/client.{Client}
+import glow_auth.{Client}
 import glow_auth/token_request/request_builder.{RequestBuilder}
 
 /// 4.4.  Client Credentials Grant

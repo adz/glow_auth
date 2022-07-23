@@ -1,3 +1,19 @@
+//// Request Builders for building up token requests
+////
+//// TODO: Rename to TokenRequestBuilder?
+////
+//// Some requirements:
+////    - MAY have query component
+////    - MUST NOT have fragment component
+////    - MUST use TLS
+////    - MUST be "POST"
+////    - Params without value MUST be same as omission
+////    - No repeat params
+////    - `scope` space-delimited case insensitive strings defined by auth server
+////       - MAY full or partly ignore
+////       - If different, MUST include `scope` in response
+////       - A default must be defined
+
 import gleam/uri.{Uri}
 import gleam/option
 import gleam/result
@@ -5,8 +21,6 @@ import gleam/http
 import gleam/http.{Scheme}
 import gleam/http/request.{Request}
 import glow_auth/uri/params.{Params}
-
-// TODO: Rename to TokenRequestBuilder?
 
 pub type RequestBuilder(body) {
   RequestBuilder(request: Request(body), params: Params)
