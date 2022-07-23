@@ -1,9 +1,5 @@
 //// A builder to generate an Authorization Uri.
 ////
-//// The client directs the resource owner to the constructed URI using an
-//// HTTP redirection response, or by other means available to it via the
-//// user-agent.
-////
 //// In Authorization Code flow, they'll be redirected with a "code" in the uri,
 //// which is short lived (10 minutes expiry recommended) that must be exchanged
 //// for an Access Token separately.
@@ -15,9 +11,14 @@
 //// on the redirect.
 ////
 //// Failure is represented by the fields:
-////  * error - invalid_request | unauthorized_client | access_denied
-////            | unsupported_response_type | invalid_scope | server_error 
-////            | temporarily_unavailable
+////  * error - set to one of:
+////     * invalid_request
+////     * unauthorized_client
+////     * access_denied
+////     * unsupported_response_type 
+////     * invalid_scope 
+////     * server_error 
+////     * temporarily_unavailable
 ////  * error_description - optional human readable
 ////  * error_uri - link to a 'more info' page
 ////  * state - the exact value previously specified in the authorization Uri

@@ -13,8 +13,8 @@ import glow_auth/token_request_builder
 /// Build a token request using a code in 
 /// [Authorization Code grant](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.3).
 ///
-/// Notes: 
-///  * The redirect_uri must be identical to usage in the Authorization Uri.
+/// Note that the redirect_uri must be identical to usage in the
+/// [Authorization Uri](./authorize_uri.html).
 pub fn authorization_code(
   client: Client(body),
   token_uri: UriAppendage,

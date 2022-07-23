@@ -4,9 +4,7 @@
 //// with additional Params to form-encode in the body, or (less commonly) use
 //// as the query part of the Uri.
 ////
-//// TODO: Rename to TokenTokenRequestBuilder?
-////
-//// Some requirements:
+//// Token request requirements:
 ////  *  MAY have query component
 ////  *  MUST NOT have fragment component
 ////  *  MUST use TLS
