@@ -1,5 +1,5 @@
-import gleam/uri.{Uri}
-import gleam/http/request.{Request}
+import gleam/uri.{type Uri}
+import gleam/http/request.{type Request}
 import gleam/string
 
 /// Prepend an access token as an authorization header bearer token

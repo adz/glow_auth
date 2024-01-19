@@ -1,14 +1,12 @@
 //// Token Request functions.
 
-import gleam/base
 import gleam/string
-import gleam/bit_string
-import gleam/uri.{Uri}
-import gleam/http/request.{Request}
-import glow_auth.{Client}
-import glow_auth/token_request_builder.{TokenRequestBuilder}
-import glow_auth/uri/uri_builder.{UriAppendage}
-import glow_auth/token_request_builder
+import gleam/bit_array
+import gleam/uri.{type Uri}
+import gleam/http/request.{type Request}
+import glow_auth.{type Client}
+import glow_auth/token_request_builder.{type TokenRequestBuilder}
+import glow_auth/uri/uri_builder.{type UriAppendage}
 
 /// Build a token request using a code in 
 /// [Authorization Code grant](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.3).
@@ -112,8 +110,8 @@ pub fn add_basic_auth_header(
 fn encode_auth(client: Client(_)) -> String {
   [client.id, client.secret]
   |> string.join(":")
-  |> bit_string.from_string()
-  |> base.encode64(False)
+  |> bit_array.from_string()
+  |> bit_array.base64_encode(False)
 }
 
 /// Add the client id and secret params to the token TokenRequestBuilder

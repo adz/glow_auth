@@ -16,13 +16,12 @@
 ////    *  If different, MUST include `scope` in response
 ////    *  A default must be defined
 
-import gleam/uri.{Uri}
+import gleam/uri.{type Uri}
 import gleam/option
 import gleam/result
-import gleam/http
-import gleam/http.{Scheme}
-import gleam/http/request.{Request}
-import glow_auth/uri/params.{Params}
+import gleam/http.{type Scheme}
+import gleam/http/request.{type Request, Request}
+import glow_auth/uri/params.{type Params}
 
 pub type TokenRequestBuilder(body) {
   TokenRequestBuilder(request: Request(body), params: Params)

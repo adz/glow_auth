@@ -6,7 +6,7 @@
 //// ...the intention is to generate this from the response given when
 //// sending a token request.
 
-import gleam/option.{None, Option, Some}
+import gleam/option.{type Option, None, Some}
 import gleam/erlang.{Second}
 import gleam/dynamic
 

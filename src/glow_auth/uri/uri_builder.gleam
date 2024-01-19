@@ -3,7 +3,7 @@
 //// or full Uri via an explicit UriAppendage type.
 ////
 
-import gleam/uri.{Uri}
+import gleam/uri.{type Uri, Uri}
 import gleam/string
 
 /// Uri Appendage defines a few handy ways of appending to an existing Uri.
