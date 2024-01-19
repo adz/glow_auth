@@ -63,15 +63,21 @@ pub fn has_an_expiry(access_token: AccessToken) -> Bool {
   option.is_some(access_token.expires_in)
 }
 
-// pub external fn universaltime() -> Result(List(String), Reason) =
-// "gleam_erlang_ffi" "universaltime"
-
 ///  Determines if the access token has expired.
 pub fn is_expired(access_token: AccessToken) -> Bool {
+  is_expired_at(access_token, time_now())
+}
+
+pub fn is_expired_at(access_token: AccessToken, at: Int) -> Bool {
   case access_token.expires_in {
-    Some(time) -> erlang.system_time(Second) > time
+    Some(time) -> at > time
     None -> False
   }
+}
+
+// TODO: Use cross platform function for 'now'
+fn time_now() -> Int {
+  erlang.system_time(Second)
 }
 
 pub fn normalize_token_type(token_type: Option(String)) -> String {

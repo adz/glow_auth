@@ -87,20 +87,27 @@ pub fn add_auth(
   case auth_scheme {
     AuthHeader ->
       rb
-      |> token_request_builder.map_request(add_basic_auth_header(client, _))
+      |> token_request_builder.map_request(
+        add_client_basic_auth_header(client, _)
+      )
     RequestBody -> add_auth_to_body(client, rb)
   }
 }
 
+pub fn add_client_basic_auth_header(client: Client(_), request: Request(a)) -> Request(a) {
+  let basic_auth_token = encode_auth(client)
+  request
+  |> add_basic_auth_header(basic_auth_token)
+}
 /// Add base64 encoded `authorization` header for basic auth.
 ///
 /// Use this when sending the auth in the request headers.
 pub fn add_basic_auth_header(
-  client: Client(_),
   request: Request(a),
+  auth_token: String,
 ) -> Request(a) {
   let auth_header =
-    ["Basic", encode_auth(client)]
+    ["Basic", auth_token]
     |> string.join(" ")
 
   request
