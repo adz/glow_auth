@@ -1,3 +1,2 @@
-gleam 0.22.0
-erlang 24.2
-rebar 3.18.0
+erlang 26.2.1
+gleam 0.34.0
