@@ -8,82 +8,100 @@
 
 import gleam/option.{type Option, None, Some}
 import gleam/erlang.{Second}
-import gleam/dynamic
+import gleam/dynamic.{type DecodeError, type Dynamic}
+import gleam/json
+import gleam/string
 
 /// Represents a token returned from an oauth2 provider
 ///
 /// Note: expires_in is seconds till expiry from time of issue
+/// which is converted to expires_at by adding to time_now().
 pub type AccessToken {
   AccessToken(
     access_token: String,
-    refresh_token: Option(String),
-    expires_in: Option(Int),
     token_type: String,
+    refresh_token: Option(String),
+    expires_at: Option(Int),
+    scope: Option(String),
   )
 }
 
-/// Decode an access token, only considering typical fields of
-///  * access_token
-///  * refresh_token (optional)
-///  * expires (optional) - seconds till expiry from now
-///  * token_type (optional) - typically "Bearer"
-///
-/// TODO: Seems like "expires_in" is also possible for "expires".
-///
-/// TODO: Decode with current datetime to give future expires_in.
-///
+/// Decode an access token
 /// TODO: Any other params are possible, so should be returned as a map.
-pub fn decoder() {
-  dynamic.decode4(
-    AccessToken,
+pub fn decoder() -> fn(Dynamic) -> Result(AccessToken, List(DecodeError)) {
+  dynamic.decode5(
+    from_decoded_response,
     dynamic.field("access_token", of: dynamic.string),
-    dynamic.field("refresh_token", of: dynamic.optional(dynamic.string)),
-    // could be expires_in, and is seconds into future from now -- store "now + this"
-    dynamic.field("expires", of: dynamic.optional(dynamic.int)),
-    // could be nil, missing, but typically "Bearer"
     dynamic.field("token_type", of: dynamic.string),
+    dynamic.optional_field("refresh_token", of: dynamic.string),
+    dynamic.optional_field("expires_in", of: dynamic.int),
+    dynamic.optional_field("scope", of: dynamic.string),
   )
-  // also there are 'other' fields that may be returned
+}
+
+pub fn from_decoded_response(
+  access_token: String,
+  token_type: String,
+  refresh_token: Option(String),
+  expires_in: Option(Int),
+  scope: Option(String),
+) -> AccessToken {
+  AccessToken(
+    access_token: access_token,
+    token_type: normalize_token_type(token_type),
+    refresh_token: refresh_token,
+    expires_at: option.map(expires_in, with: from_now),
+    scope: scope,
+  )
+}
+
+pub fn from_now(seconds: Int) -> Int {
+  time_now() + seconds
+}
+
+pub fn decode_token_from_response(response: String) {
+  json.decode(response, using: decoder())
 }
 
 ///  Returns a new `AccessToken` given the access token `string`.
 pub fn new(token: String) -> AccessToken {
   AccessToken(
     access_token: token,
-    refresh_token: None,
-    expires_in: None,
     token_type: "Bearer",
+    refresh_token: None,
+    expires_at: None,
+    scope: None,
   )
 }
 
-/// Does the access token have an expiry?
-///
-///Returns `true` unless `expires_in` is `None`.
 pub fn has_an_expiry(access_token: AccessToken) -> Bool {
-  option.is_some(access_token.expires_in)
+  option.is_some(access_token.expires_at)
 }
 
-///  Determines if the access token has expired.
 pub fn is_expired(access_token: AccessToken) -> Bool {
   is_expired_at(access_token, time_now())
 }
 
 pub fn is_expired_at(access_token: AccessToken, at: Int) -> Bool {
-  case access_token.expires_in {
-    Some(time) -> at > time
+  case access_token.expires_at {
+    Some(expires_time) -> at <= expires_time
     None -> False
   }
 }
 
-// TODO: Use cross platform function for 'now'
-fn time_now() -> Int {
+pub fn time_now() -> Int {
+  // TODO: Use cross platform function for 'now'
   erlang.system_time(Second)
 }
 
-pub fn normalize_token_type(token_type: Option(String)) -> String {
-  case token_type {
-    None -> "Bearer"
-    Some("bearer") -> "Bearer"
-    Some(str) -> str
+pub fn normalize_token_type(token_type: String) -> String {
+  // Value is case insensitive.
+  // https://ietf.org/doc/html/rfc6749#section-7.1
+  //
+  // Howerver, when used in authentication, for Bearer should always be 'Bearer'
+  // https://tools.ietf.org/html/rfc6750#section-2.1
+  case string.lowercase(token_type) {
+    "bearer" -> "Bearer"
+    str -> str
   }
 }
