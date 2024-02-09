@@ -2,7 +2,7 @@
 
 [![Package Version](https://img.shields.io/hexpm/v/glow_auth)](https://hex.pm/packages/glow_auth)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/glow_auth/)
-[![Test](https://github.com/adz/glow_auth/actions/workflows/test.yml/badge.svg)]
+[![Test](https://github.com/adz/glow_auth/actions/workflows/test.yml/badge.svg)](https://github.com/adz/glow_auth/actions/workflows/test.yml)
 
 Glow Auth is a gleam OAuth 2.0 helper library.
 
