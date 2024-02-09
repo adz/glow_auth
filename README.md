@@ -2,10 +2,11 @@
 
 [![Package Version](https://img.shields.io/hexpm/v/glow_auth)](https://hex.pm/packages/glow_auth)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/glow_auth/)
+[![Test](https://github.com/adz/glow_auth/actions/workflows/test.yml/badge.svg)]
 
 Glow Auth is a gleam OAuth 2.0 helper library.
 
-See [RFC6749 - The OAuth 2.0 Authorization Framework](https://datatracker.ietf.org/doc/html/rfc6749)
+See [RFC 6749 - The OAuth 2.0 Authorization Framework](https://datatracker.ietf.org/doc/html/rfc6749)
 for all the gory details... however, relevant parts have been adapted
 into the docs here.
 
@@ -73,7 +74,7 @@ web server:
      |         |<---(E)----- Access Token -------------------'
      +---------+       (w/ Optional Refresh Token)
 
-[RFC6849: Section 4.1]( https://datatracker.ietf.org/doc/html/rfc6749#section-4.1 )
+More details at [RFC 6749: Section 4.1]( https://datatracker.ietf.org/doc/html/rfc6749#section-4.1 )
 
 In this grant type, the users browser is directed to an authorization
 server (A) to authenticate (B) and establish whether the user wants to
