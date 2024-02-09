@@ -4,7 +4,10 @@
 [![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/glow_auth/)
 
 Glow Auth is a gleam OAuth 2.0 helper library.
-See [RFC6749](https://datatracker.ietf.org/doc/html/rfc6749).
+
+See [RFC6749 - The OAuth 2.0 Authorization Framework](https://datatracker.ietf.org/doc/html/rfc6749)
+for all the gory details... however, relevant parts have been adapted
+into the docs here.
 
 ## Installation
 
@@ -18,55 +21,83 @@ and its documentation can be found at <https://hexdocs.pm/glow_auth>.
 
 The OAuth 2.0 authorization framework enables a third-party
 application to obtain limited access to an HTTP service, either on
-behalf of a resource owner by orchestrating an approval interaction
-between the resource owner and the HTTP service, or by allowing the
-third-party application to obtain access on its own behalf.
+behalf of a resource owner (e.g. a user) by orchestrating an approval
+interaction between the resource owner and the HTTP service, or by
+allowing the third-party application to obtain access on its own behalf.
 
 
 # Grant Types
 
-The specification defines four grant types -- authorization code, implicit,
-resource owner password credentials, and client credentials -- as well as an
-extensibility mechanism for defining additional types.
+Access is granted by way of one of the following grant types:
 
-Once granted an access token, it is typically included as a header
-in your requests to the HTTP service.
+ * Authorization Code, 
+ * Implicit (not supported),
+ * Resource Owner Password Credentials (not supported), 
+ * Client Credentials,
+ * Extension Grants (not supported).
 
-Use [glow_auth#authorization_header](./glow_auth.html#authorization_header)
-to embed the header to your request.
+Each grant type differs in details, but will result in an 'access token'
+when successful. See below for specifics.
 
+Once granted an 'access token', it is typically included as a header
+in your requests to access the HTTP service.
+
+ * Use [glow_auth#authorization_header](./glow_auth.html#authorization_header)
+   to embed the access token as a header in your request.
+
+It's pretty common for these to have an expiry and support a refresh flow.
+
+ * Use [glow_auth.token_request#refresh](./glow_auth/token_request.html#refresh)
+   to refresh a token.
 
 ## Authorization Code
 
-The authorization code is obtained by using an authorization server
-as an intermediary between the client and resource owner.  Instead of
-requesting authorization directly from the resource owner, the client
-directs the resource owner to an authorization server (via its
-user-agent as defined in [RFC2616]), which in turn directs the
-resource owner back to the client with the authorization code.
+Note that the 'client' would typically be your gleam app running as a
+web server:
 
-Use [glow_auth/authorize_uri](./glow_auth/authorize_uri.html) to build up an
-authorization uri to use to redirect to.
+     +----------+          Client Identifier      +---------------+
+     |         -+----(A)-- & Redirection URI ---->|               |
+     | Browser  |                                 | Authorization |
+     |         -+----(B)-- User authenticates --->|     Server    |
+     |          |                                 |               |
+     |         -+----(C)-- Authorization Code ---<|               |
+     +-|----|---+                                 +---------------+
+       |    |                                         ^      v
+      (A)  (C)                                        |      |
+       |    |                                         |      |
+       ^    v                                         |      |
+     +---------+                                      |      |
+     |         |>---(D)-- Authorization Code ---------'      |
+     |  Client |          & Redirection URI                  |
+     |         |                                             |
+     |         |<---(E)----- Access Token -------------------'
+     +---------+       (w/ Optional Refresh Token)
 
-On redirect back, you'll receive a `code` that can be used to request a token.
+[RFC6849: Section 4.1]( https://datatracker.ietf.org/doc/html/rfc6749#section-4.1 )
+
+In this grant type, the users browser is directed to an authorization
+server (A) to authenticate (B) and establish whether the user wants to
+grant or deny access. When successful, the authorization server
+redirects the user back with an 'authorization code' in the uri (C).
+
+ * Use [glow_auth/authorize_uri](./glow_auth/authorize_uri.html) to build up the
+   authorization uri to redirect to. 
+
+After receiving the 'authorization code' you must use it to request an
+'access token' from the authorization server.
+
  * Use [glow_auth/token_request#authorize_code](./glow_auth/token_request.html#authorize_code)
-   to do the token request.
+   to request an access token.
+   * Note: must include the redirection URI used to obtain the 'authorization code'.
  * Use [glow_auth/access_token#decoder](./glow_auth/access_token.html#decoder)
    to decode an access token response to an [Access Token](./glow_auth/access_token.html#AccessToken).
-
-It's pretty common for these to have an expiry and support refresh flow.
- * Use [glow_auth.token_request#refresh](./glow_auth/token_request.html#refresh)
-   to refresh a token.
 
 ## Implicit
 
 The implicit grant is a simplified authorization code flow optimized
 for clients implemented in a browser using a scripting language such
 as JavaScript.  In the implicit flow, instead of issuing the client
-an authorization code, the client is issued an access token directly
-(as the result of the resource owner authorization).  The grant type
-is implicit, as no intermediate credentials (such as an authorization
-code) are issued (and later used to obtain an access token).
+an authorization code, the client is issued an access token directly.
 
 Not supported.
 
@@ -86,11 +117,21 @@ Not supported (yet).
 
 ## Client Credentials
 
-Client credentials are used as an authorization grant
-typically when the client is acting on its own behalf (the client is
-also the resource owner) or is requesting access to protected
-resources based on an authorization previously arranged with the
-authorization server.
+     +---------+                                  +---------------+
+     |         |                                  |               |
+     |         |>--(A)- Client Authentication --->| Authorization |
+     | Client  |                                  |     Server    |
+     |         |<--(B)---- Access Token ---------<|               |
+     |         |                                  |               |
+     +---------+                                  +---------------+
+
+   (A)  The client authenticates with the authorization server and
+        requests an access token from the token endpoint.
+
+   (B)  The authorization server authenticates the client, and if valid,
+        issues an access token.
+
+More details at [RFC 6749: Section 4.4](https://datatracker.ietf.org/doc/html/rfc6749#section-4.4)
 
  * Use [glow_auth/token_request#client_credentials](./glow_auth/token_request.html#client_credentials)
    to do the token request.
