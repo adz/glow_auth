@@ -1,11 +1,11 @@
+import gleam/http
+import gleam/http/request.{type Request, Request}
+import gleam/option.{None}
+import gleam/result
+import gleam/uri
 import gleeunit
 import gleeunit/should
-import gleam/option.{None}
-import gleam/http
-import gleam/uri
-import gleam/http/request.{type Request, Request}
 import glow_auth
-import gleam/result
 
 pub fn main() {
   gleeunit.main()

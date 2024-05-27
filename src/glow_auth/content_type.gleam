@@ -1,10 +1,10 @@
 //// WIP -- not used, but the idea is to help out in decode of access token...
 
-import gleam/string
-import gleam/list
-import gleam/result
 import gleam/http.{type Header}
 import gleam/http/request.{type Request}
+import gleam/list
+import gleam/result
+import gleam/string
 
 pub fn content_type_from_request(request: Request(body)) -> String {
   case get_content_type_header(request.headers) {

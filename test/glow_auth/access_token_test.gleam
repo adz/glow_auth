@@ -1,8 +1,8 @@
+import gleam/dict
+import gleam/dynamic
+import gleam/option.{None, Some}
 import gleeunit/should
 import glow_auth/access_token.{AccessToken}
-import gleam/dynamic
-import gleam/dict
-import gleam/option.{None, Some}
 
 pub fn token() {
   access_token.new("123")

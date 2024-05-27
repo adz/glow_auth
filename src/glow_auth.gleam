@@ -1,6 +1,6 @@
-import gleam/uri.{type Uri}
 import gleam/http/request.{type Request}
 import gleam/string
+import gleam/uri.{type Uri}
 
 fn build_bearer_token(token: String) -> String {
   ["Bearer", token]

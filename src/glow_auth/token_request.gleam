@@ -1,9 +1,9 @@
 //// Token Request functions.
 
-import gleam/string
 import gleam/bit_array
-import gleam/uri.{type Uri}
 import gleam/http/request.{type Request}
+import gleam/string
+import gleam/uri.{type Uri}
 import glow_auth.{type Client}
 import glow_auth/token_request_builder.{type TokenRequestBuilder}
 import glow_auth/uri/uri_builder.{type UriAppendage}

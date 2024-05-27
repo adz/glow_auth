@@ -3,8 +3,8 @@
 //// or full Uri via an explicit UriAppendage type.
 ////
 
-import gleam/uri.{type Uri, Uri}
 import gleam/string
+import gleam/uri.{type Uri, Uri}
 
 /// Uri Appendage defines a few handy ways of appending to an existing Uri.
 ///
@@ -47,7 +47,7 @@ pub fn append(to uri: Uri, with appendage: UriAppendage) -> Uri {
       Uri(
         ..uri,
         path: [uri.path, path]
-        |> string.join("/"),
+          |> string.join("/"),
       )
     FullPath(path) -> Uri(..uri, path: path)
     FullUri(uri) -> uri

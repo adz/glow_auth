@@ -46,8 +46,8 @@
 ////  * Typically are registered in advance of usage
 ////  * Receiving response SHOULD NOT do js, but redirect again without exposing creds
 
-import gleam/uri.{type Uri, Uri}
 import gleam/option.{type Option, None, Some}
+import gleam/uri.{type Uri, Uri}
 import glow_auth.{type Client}
 import glow_auth/uri/uri_builder.{type UriAppendage}
 

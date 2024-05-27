@@ -6,10 +6,10 @@
 //// ...the intention is to generate this from the response given when
 //// sending a token request.
 
-import gleam/option.{type Option, None, Some}
-import gleam/erlang.{Second}
 import gleam/dynamic.{type DecodeError, type Dynamic}
+import gleam/erlang.{Second}
 import gleam/json
+import gleam/option.{type Option, None, Some}
 import gleam/string
 
 /// Represents a token returned from an oauth2 provider
