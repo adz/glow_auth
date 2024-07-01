@@ -6,6 +6,7 @@ on:
       - master
       - main
   pull_request:
+  workflow_dispatch:
 
 jobs:
   test:
@@ -14,8 +15,8 @@ jobs:
       - uses: actions/checkout@v3
       - uses: erlef/setup-beam@v1
         with:
-          otp-version: "26.2.2"
-          gleam-version: "0.34.0"
+          otp-version: "26.2.5"
+          gleam-version: "1.2.1"
           rebar3-version: "3"
           # elixir-version: "1.15.4"
       - run: gleam deps download
