@@ -33,6 +33,17 @@ pub fn authorization_code(
   |> token_request_builder.to_token_request()
 }
 
+/// The [Access Token Scope](https://datatracker.ietf.org/doc/html/rfc6749#section-3.3)
+/// is a list of unordered, space-deliminated, case-sensitive strings.
+pub type Scope {
+  /// Respresents the access token scope as a list of individual scope values that can 
+  /// later be joined into a space-delimited string.
+  ScopeList(List(String))
+  /// Represents the access token scope as a string of one or more space-deliminated scopes.
+  /// Useful for a single scope or when the scopes have been pre-joined.
+  ScopeString(String)
+}
+
 /// Build a token request using just the client id/secret in
 /// [Client Credentials grant](https://datatracker.ietf.org/doc/html/rfc6749#section-4.4.2)
 pub fn client_credentials(
