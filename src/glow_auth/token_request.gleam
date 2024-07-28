@@ -2,6 +2,8 @@
 
 import gleam/bit_array
 import gleam/http/request.{type Request}
+import gleam/list
+import gleam/option.{type Option, Some}
 import gleam/string
 import gleam/uri.{type Uri}
 import glow_auth.{type Client}
@@ -44,18 +46,20 @@ pub type Scope {
   ScopeString(String)
 }
 
-/// Build a token request using just the client id/secret in
+/// Build a token request using the client id/secret and optionally a access token scope in
 /// [Client Credentials grant](https://datatracker.ietf.org/doc/html/rfc6749#section-4.4.2)
 pub fn client_credentials(
   client: Client(body),
   token_uri: UriAppendage,
   auth_scheme: AuthScheme,
+  scope: Option(Scope),
 ) -> Request(String) {
   token_uri
   |> uri_builder.append(to: client.site)
   |> token_request_builder.from_uri()
   |> token_request_builder.put_param("grant_type", "client_credentials")
   |> add_auth(client, auth_scheme)
+  |> add_scope(scope)
   |> token_request_builder.to_token_request()
 }
 
@@ -87,6 +91,29 @@ pub type AuthScheme {
   /// Alternatively, the authorization server MAY support including the
   /// client credentials in the request-body (client_id and client_secret).
   RequestBody
+}
+
+/// Adds a scope from a [ScopeList] or [ScopeString], if present.
+pub fn add_scope(
+  rb: TokenRequestBuilder(a),
+  scope: Option(Scope),
+) -> TokenRequestBuilder(a) {
+  case scope {
+    Some(some_scope) -> {
+      case some_scope {
+        ScopeList(scope_list) ->
+          scope_list
+          |> list.map(string.trim)
+          |> string.join(" ")
+
+        ScopeString(scope_string) ->
+          scope_string
+          |> string.trim
+      }
+      |> token_request_builder.put_param(rb, "scope", _)
+    }
+    _ -> rb
+  }
 }
 
 /// Add auth by means of either AuthHeader or RequestBody 
