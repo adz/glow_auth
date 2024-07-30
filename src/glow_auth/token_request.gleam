@@ -3,7 +3,6 @@
 import gleam/bit_array
 import gleam/http/request.{type Request}
 import gleam/list
-import gleam/option.{type Option, Some}
 import gleam/string
 import gleam/uri.{type Uri}
 import glow_auth.{type Client}
@@ -44,6 +43,10 @@ pub type Scope {
   /// Represents the access token scope as a string of one or more space-deliminated scopes.
   /// Useful for a single scope or when the scopes have been pre-joined.
   ScopeString(String)
+  /// Represents the omittion of an access token scope.
+  /// Useful when the authorization server will fall back to a default scope when the scope
+  /// is not present in the body.
+  DefaultScope
 }
 
 /// Build a token request using the client id/secret and optionally a access token scope in
@@ -52,7 +55,7 @@ pub fn client_credentials(
   client: Client(body),
   token_uri: UriAppendage,
   auth_scheme: AuthScheme,
-  scope: Option(Scope),
+  scope: Scope,
 ) -> Request(String) {
   token_uri
   |> uri_builder.append(to: client.site)
@@ -93,27 +96,32 @@ pub type AuthScheme {
   RequestBody
 }
 
-/// Adds a scope from a [ScopeList] or [ScopeString], if present.
+/// Add a scope to the builder if not a [DefaultScope].
 pub fn add_scope(
   rb: TokenRequestBuilder(a),
-  scope: Option(Scope),
+  scope: Scope,
 ) -> TokenRequestBuilder(a) {
   case scope {
-    Some(some_scope) -> {
-      case some_scope {
-        ScopeList(scope_list) ->
-          scope_list
-          |> list.map(string.trim)
-          |> string.join(" ")
+    ScopeList(scope_list) ->
+      scope_list
+      |> list.map(string.trim)
+      |> string.join(" ")
+      |> put_scope(rb)
 
-        ScopeString(scope_string) ->
-          scope_string
-          |> string.trim
-      }
-      |> token_request_builder.put_param(rb, "scope", _)
-    }
-    _ -> rb
+    ScopeString(scope_string) ->
+      scope_string
+      |> string.trim
+      |> put_scope(rb)
+
+    DefaultScope -> rb
   }
+}
+
+fn put_scope(
+  scope: String,
+  rb: TokenRequestBuilder(a),
+) -> TokenRequestBuilder(a) {
+  rb |> token_request_builder.put_param("scope", scope)
 }
 
 /// Add auth by means of either AuthHeader or RequestBody 
