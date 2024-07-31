@@ -102,26 +102,22 @@ pub fn add_scope(
   scope: Scope,
 ) -> TokenRequestBuilder(a) {
   case scope {
-    ScopeList(scope_list) ->
-      scope_list
-      |> list.map(string.trim)
-      |> string.join(" ")
-      |> put_scope(rb)
+    ScopeList(scope_list) -> scope_list |> put_scope(rb)
 
-    ScopeString(scope_string) ->
-      scope_string
-      |> string.trim
-      |> put_scope(rb)
+    ScopeString(scope_string) -> [scope_string] |> put_scope(rb)
 
     DefaultScope -> rb
   }
 }
 
 fn put_scope(
-  scope: String,
+  scope: List(String),
   rb: TokenRequestBuilder(a),
 ) -> TokenRequestBuilder(a) {
-  rb |> token_request_builder.put_param("scope", scope)
+  scope
+  |> list.map(string.trim)
+  |> string.join(" ")
+  |> token_request_builder.put_param(rb, "scope", _)
 }
 
 /// Add auth by means of either AuthHeader or RequestBody 
