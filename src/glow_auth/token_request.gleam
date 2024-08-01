@@ -96,7 +96,7 @@ pub type AuthScheme {
   RequestBody
 }
 
-/// Add a scope to the builder if not a [DefaultScope].
+/// Add a scope to the builder if not a DefaultScope.
 pub fn add_scope(
   rb: TokenRequestBuilder(a),
   scope: Scope,
