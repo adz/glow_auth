@@ -14,6 +14,14 @@ scope value(s).
 
 ## Client Credentials
 
+> **TIP**
+>
+> Verify how your authorization server handles the access token scopes for client
+> credentials flow. If it is not required to send a scope in the request, use the
+> DefaultScope parameterless constructor to omit the scope parameter from the request.
+>
+> See the [Scope][cc1] type for more details.
+
 ```gleam
 import gleam/hackney
 import gleam/io
@@ -68,3 +76,5 @@ pub fn main() {
   |> Ok
 }
 ```
+
+[cc1]: ./glow_auth/token_request#Scope
