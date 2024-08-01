@@ -1,12 +1,18 @@
-# Authorization Code
+# Usage Examples
+
+## Prerequisites
+
+To make use of the example code below, you will first need to follow your Identity Provider's 
+process for creating a client id and client secret and obtaining the token request URI and 
+scope value(s).
+
+## Authorization Code
 
 ```
 // TODO
 ```
 
-# Client Credentials
-
-
+## Client Credentials
 
 ```gleam
 import gleam/hackney
