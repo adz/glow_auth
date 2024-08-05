@@ -43,7 +43,7 @@ pub type Scope {
   /// Represents the access token scope as a string of one or more space-deliminated scopes.
   /// Useful for a single scope or when the scopes have been pre-joined.
   ScopeString(String)
-  /// Represents the ommission of an access token scope.
+  /// Represents the omission of an access token scope.
   /// Useful when the authorization server will fall back to a default scope when the scope
   /// is not present in the body.
   DefaultScope
