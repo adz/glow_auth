@@ -165,7 +165,7 @@ fn encode_auth(client: Client(_)) -> String {
   [client.id, client.secret]
   |> string.join(":")
   |> bit_array.from_string()
-  |> bit_array.base64_encode(False)
+  |> bit_array.base64_encode(True)
 }
 
 /// Add the client id and secret params to the token TokenRequestBuilder
