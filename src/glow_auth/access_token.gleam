@@ -6,7 +6,7 @@
 //// ...the intention is to generate this from the response given when
 //// sending a token request.
 
-import gleam/dynamic.{type DecodeError, type Dynamic}
+import gleam/dynamic/decode.{type Decoder}
 import gleam/erlang.{Second}
 import gleam/json
 import gleam/option.{type Option, None, Some}
@@ -28,31 +28,27 @@ pub type AccessToken {
 
 /// Decode an access token
 /// TODO: Any other params are possible, so should be returned as a map.
-pub fn decoder() -> fn(Dynamic) -> Result(AccessToken, List(DecodeError)) {
-  dynamic.decode5(
-    from_decoded_response,
-    dynamic.field("access_token", of: dynamic.string),
-    dynamic.field("token_type", of: dynamic.string),
-    dynamic.optional_field("refresh_token", of: dynamic.string),
-    dynamic.optional_field("expires_in", of: dynamic.int),
-    dynamic.optional_field("scope", of: dynamic.string),
-  )
-}
+pub fn decoder() -> Decoder(AccessToken) {
+  let optional_field_as_option = fn(
+    key: String,
+    d: Decoder(t),
+    next: fn(Option(t)) -> Decoder(final),
+  ) -> Decoder(final) {
+    decode.optional_field(key, None, decode.optional(d), next)
+  }
 
-pub fn from_decoded_response(
-  access_token: String,
-  token_type: String,
-  refresh_token: Option(String),
-  expires_in: Option(Int),
-  scope: Option(String),
-) -> AccessToken {
-  AccessToken(
+  use access_token <- decode.field("access_token", decode.string)
+  use token_type <- decode.field("token_type", decode.string)
+  use refresh_token <- optional_field_as_option("refresh_token", decode.string)
+  use expires_in <- optional_field_as_option("expires_in", decode.int)
+  use scope <- optional_field_as_option("scope", decode.string)
+  decode.success(AccessToken(
     access_token: access_token,
     token_type: normalize_token_type(token_type),
     refresh_token: refresh_token,
     expires_at: option.map(expires_in, with: from_now),
     scope: scope,
-  )
+  ))
 }
 
 pub fn from_now(seconds: Int) -> Int {
@@ -60,7 +56,7 @@ pub fn from_now(seconds: Int) -> Int {
 }
 
 pub fn decode_token_from_response(response: String) {
-  json.decode(response, using: decoder())
+  json.parse(response, using: decoder())
 }
 
 ///  Returns a new `AccessToken` given the access token `string`.

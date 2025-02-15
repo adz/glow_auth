@@ -1,5 +1,6 @@
 import gleam/dict
 import gleam/dynamic
+import gleam/dynamic/decode
 import gleam/option.{None, Some}
 import gleeunit/should
 import glow_auth/access_token.{AccessToken}
@@ -50,7 +51,7 @@ pub fn decoder_test() {
   [#("access_token", "xyz"), #("token_type", "Bearer")]
   |> dict.from_list
   |> dynamic.from()
-  |> access_token.decoder()
+  |> decode.run(access_token.decoder())
   |> should.equal(Ok(access_token.new("xyz")))
 }
 
@@ -62,7 +63,7 @@ pub fn decoder_with_expires_test() {
   ]
   |> dict.from_list
   |> dynamic.from()
-  |> access_token.decoder()
+  |> decode.run(access_token.decoder())
   |> should.equal(
     Ok(AccessToken(
       "xyz",
@@ -83,7 +84,7 @@ pub fn decoder_with_expires_and_refresh_token_test() {
   ]
   |> dict.from_list
   |> dynamic.from()
-  |> access_token.decoder()
+  |> decode.run(access_token.decoder())
   |> should.equal(
     Ok(AccessToken(
       "xyz",
