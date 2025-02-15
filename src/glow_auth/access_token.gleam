@@ -7,10 +7,11 @@
 //// sending a token request.
 
 import gleam/dynamic/decode.{type Decoder}
-import gleam/erlang.{Second}
+import gleam/float
 import gleam/json
 import gleam/option.{type Option, None, Some}
 import gleam/string
+import gleam/time/timestamp
 
 /// Represents a token returned from an oauth2 provider
 ///
@@ -86,8 +87,7 @@ pub fn is_expired_at(access_token: AccessToken, at: Int) -> Bool {
 }
 
 pub fn time_now() -> Int {
-  // TODO: Use cross platform function for 'now'
-  erlang.system_time(Second)
+  timestamp.system_time() |> timestamp.to_unix_seconds |> float.truncate
 }
 
 pub fn normalize_token_type(token_type: String) -> String {
