@@ -32,10 +32,28 @@ pub type AccessToken {
 pub fn decoder() -> Decoder(AccessToken) {
   use access_token <- decode.field("access_token", decode.string)
   use token_type <- decode.field("token_type", decode.string)
-  use refresh_token <- decode.optional_field("refresh_token", None, decode.optional(decode.string))
-  use expires_in <- decode.optional_field("expires_in", None, decode.optional(decode.int))
-  use scope <- decode.optional_field("scope", None, decode.optional(decode.string))
-  decode.success(from_decoded_response(access_token:, token_type:, refresh_token:, expires_in:, scope:))
+  use refresh_token <- decode.optional_field(
+    "refresh_token",
+    None,
+    decode.optional(decode.string),
+  )
+  use expires_in <- decode.optional_field(
+    "expires_in",
+    None,
+    decode.optional(decode.int),
+  )
+  use scope <- decode.optional_field(
+    "scope",
+    None,
+    decode.optional(decode.string),
+  )
+  decode.success(from_decoded_response(
+    access_token:,
+    token_type:,
+    refresh_token:,
+    expires_in:,
+    scope:,
+  ))
 }
 
 pub fn from_decoded_response(
