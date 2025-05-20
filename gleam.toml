@@ -5,12 +5,12 @@ licences = ["Apache-2.0"]
 description = "OAuth2 helpers in Gleam..."
 repository = { type = "github", user = "adz", repo = "glow_auth" }
 links = [{ title = "Website", href = "https://github.com/adz/glow_auth" }]
-gleam = ">= 1.5.0"
+gleam = ">= 1.10.0"
 
 [dependencies]
-gleam_stdlib = "~> 0.34"
-gleam_http = "~> 3.5"
-gleam_json = ">= 2.0.0 and < 3.0.0"
+gleam_stdlib = "~> 0.60"
+gleam_http = "~> 4.0"
+gleam_json = ">= 3.0.1 and < 4.0.0"
 gleam_time = ">= 1.0.0-rc2 and < 2.0.0"
 
 [dev-dependencies]
