@@ -49,7 +49,7 @@ pub fn expired_test() {
 pub fn decoder_test() {
   [
     #("access_token" |> dynamic.string, "xyz" |> dynamic.string),
-    #("token_type" |> dynamic.string, "Bearer" |> dynamic.string)
+    #("token_type" |> dynamic.string, "Bearer" |> dynamic.string),
   ]
   |> dynamic.properties
   |> decode.run(access_token.decoder())
