@@ -30,26 +30,28 @@ pub type AccessToken {
 /// Decode an access token
 /// TODO: Any other params are possible, so should be returned as a map.
 pub fn decoder() -> Decoder(AccessToken) {
-  let optional_field_as_option = fn(
-    key: String,
-    d: Decoder(t),
-    next: fn(Option(t)) -> Decoder(final),
-  ) -> Decoder(final) {
-    decode.optional_field(key, None, decode.optional(d), next)
-  }
-
   use access_token <- decode.field("access_token", decode.string)
   use token_type <- decode.field("token_type", decode.string)
-  use refresh_token <- optional_field_as_option("refresh_token", decode.string)
-  use expires_in <- optional_field_as_option("expires_in", decode.int)
-  use scope <- optional_field_as_option("scope", decode.string)
-  decode.success(AccessToken(
+  use refresh_token <- decode.optional_field("refresh_token", None, decode.optional(decode.string))
+  use expires_in <- decode.optional_field("expires_in", None, decode.optional(decode.int))
+  use scope <- decode.optional_field("scope", None, decode.optional(decode.string))
+  decode.success(from_decoded_response(access_token:, token_type:, refresh_token:, expires_in:, scope:))
+}
+
+pub fn from_decoded_response(
+  access_token access_token: String,
+  token_type token_type: String,
+  refresh_token refresh_token: Option(String),
+  expires_in expires_in: Option(Int),
+  scope scope: Option(String),
+) -> AccessToken {
+  AccessToken(
     access_token: access_token,
     token_type: normalize_token_type(token_type),
     refresh_token: refresh_token,
     expires_at: option.map(expires_in, with: from_now),
     scope: scope,
-  ))
+  )
 }
 
 pub fn from_now(seconds: Int) -> Int {

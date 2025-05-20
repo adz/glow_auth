@@ -1,4 +1,3 @@
-import gleam/dict
 import gleam/dynamic
 import gleam/dynamic/decode
 import gleam/option.{None, Some}
@@ -48,21 +47,22 @@ pub fn expired_test() {
 }
 
 pub fn decoder_test() {
-  [#("access_token", "xyz"), #("token_type", "Bearer")]
-  |> dict.from_list
-  |> dynamic.from()
+  [
+    #("access_token" |> dynamic.string, "xyz" |> dynamic.string),
+    #("token_type" |> dynamic.string, "Bearer" |> dynamic.string)
+  ]
+  |> dynamic.properties
   |> decode.run(access_token.decoder())
   |> should.equal(Ok(access_token.new("xyz")))
 }
 
 pub fn decoder_with_expires_test() {
   [
-    #("access_token", dynamic.from("xyz")),
-    #("token_type", dynamic.from("Bearer")),
-    #("expires_in", dynamic.from(120)),
+    #("access_token" |> dynamic.string, "xyz" |> dynamic.string),
+    #("token_type" |> dynamic.string, "Bearer" |> dynamic.string),
+    #("expires_in" |> dynamic.string, 120 |> dynamic.int),
   ]
-  |> dict.from_list
-  |> dynamic.from()
+  |> dynamic.properties()
   |> decode.run(access_token.decoder())
   |> should.equal(
     Ok(AccessToken(
@@ -77,13 +77,12 @@ pub fn decoder_with_expires_test() {
 
 pub fn decoder_with_expires_and_refresh_token_test() {
   [
-    #("access_token", dynamic.from("xyz")),
-    #("token_type", dynamic.from("Bearer")),
-    #("expires_in", dynamic.from(120)),
-    #("refresh_token", dynamic.from("abc")),
+    #("access_token" |> dynamic.string, "xyz" |> dynamic.string),
+    #("token_type" |> dynamic.string, "Bearer" |> dynamic.string),
+    #("expires_in" |> dynamic.string, 120 |> dynamic.int),
+    #("refresh_token" |> dynamic.string, "abc" |> dynamic.string),
   ]
-  |> dict.from_list
-  |> dynamic.from()
+  |> dynamic.properties()
   |> decode.run(access_token.decoder())
   |> should.equal(
     Ok(AccessToken(
