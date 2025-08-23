@@ -15,7 +15,7 @@ fn make_request(
   scope: Scope,
   _handler: fn(Request(String)) -> Result(String, Nil),
 ) -> Result(Request(String), Nil) {
-  use example <- result.then(uri.parse("example.com"))
+  use example <- result.try(uri.parse("example.com"))
   let req =
     example
     |> Client("id", "secret", _)

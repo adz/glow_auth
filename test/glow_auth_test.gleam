@@ -1,5 +1,5 @@
 import gleam/http
-import gleam/http/request.{type Request, Request}
+import gleam/http/request.{Request}
 import gleam/option.{None}
 import gleam/result
 import gleam/uri
@@ -32,7 +32,7 @@ pub fn authorization_header_test() {
 }
 
 pub fn client_constructor_test() {
-  use example_uri <- result.then(uri.parse("https://example.com"))
+  use example_uri <- result.try(uri.parse("https://example.com"))
   let c = glow_auth.Client(id: "123", secret: "abc", site: example_uri)
 
   c.id
