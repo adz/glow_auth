@@ -43,7 +43,7 @@ pub fn main() {
 
   // Use the values above to create and send a token request to the auth server.   
   //  1. Create the site Uri to serve as the base path.
-  use site <- result.then(uri.parse(base_uri))
+  use site <- result.try(uri.parse(base_uri))
 
   //  2. Create a Client using the client_id, client_secret, and site.
   let client = Client(client_id, client_secret, site)
